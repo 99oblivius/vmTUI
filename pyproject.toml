@@ -1,0 +1,46 @@
+[project]
+name = "vm-manager"
+version = "0.1.0"
+description = "TUI-based virtual machine manager for libvirt/KVM"
+readme = "README.md"
+requires-python = ">=3.13"
+license = {text = "MIT"}
+authors = [
+    {name = "VM Manager Contributors"}
+]
+dependencies = [
+    "blessed>=1.20",
+    "libvirt-python>=10.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "mypy>=1.13",
+    "ruff>=0.8",
+]
+build = [
+    "nuitka>=2.0",
+    "ordered-set>=4.1",
+]
+
+[project.scripts]
+vm-manager = "vm_manager.__main__:main"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.mypy]
+python_version = "3.13"
+strict = true
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = true
+disallow_incomplete_defs = true
+
+[tool.ruff]
+target-version = "py313"
+line-length = 100
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "N", "W", "UP", "B", "C4", "SIM", "TCH"]
