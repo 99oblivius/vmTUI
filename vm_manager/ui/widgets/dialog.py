@@ -537,9 +537,6 @@ class ToggleListDialog(Dialog):
 
     def show(self) -> list[str] | None:
         """Display dialog and return list of selected values, or None if cancelled."""
-        # DEBUG: Setup logging to file
-        debug_log = open('/tmp/vm_manager_gpu_debug.log', 'a')
-
         max_label = max(len(opt[1]) for opt in self.options) if self.options else 10
         width = max(50, max_label + 10, len(self.title) + 6)
         height = min(len(self.options) + 6, 23)  # Extra lines for hint
@@ -619,16 +616,9 @@ class ToggleListDialog(Dialog):
                 self.show_hint = False  # Clear hint on any key
 
                 if key.name == "KEY_ESCAPE":
-                    # Escape closes without applying changes
-                    print(f"\n[DEBUG DIALOG] Escape pressed, canceling", file=debug_log, flush=True)
-                    debug_log.close()
                     return None
                 elif key.name == "KEY_ENTER":
-                    # Enter confirms and closes
-                    result_list = list(self.selected_values)
-                    print(f"\n[DEBUG DIALOG] Enter pressed, returning: {result_list}", file=debug_log, flush=True)
-                    debug_log.close()
-                    return result_list
+                    return list(self.selected_values)
                 elif key.name == "KEY_UP":
                     self.cursor_index = max(0, self.cursor_index - 1)
                 elif key.name == "KEY_DOWN":
@@ -660,20 +650,14 @@ class ToggleListDialog(Dialog):
 
                                 if confirm.show():
                                     # User confirmed - steal the device
-                                    print(f"[DEBUG DIALOG] Stealing device {value} from {owner_vm}", file=debug_log, flush=True)
-
-                                    # Call the callback to remove from other VM
                                     if self.on_steal_device(value, owner_vm):
                                         # Successfully stolen - add to current selection
                                         for dev in group_devices:
                                             self.selected_values.add(dev)
-                                        print(f"[DEBUG DIALOG] Successfully stole and added group {group_devices}", file=debug_log, flush=True)
                                     else:
                                         # Failed to steal - show hint
                                         self.show_hint = True
                                         self.hint_message = f"Failed to remove device from {owner_vm}"
-                                else:
-                                    print(f"[DEBUG DIALOG] User declined to steal device", file=debug_log, flush=True)
                             else:
                                 # Not owned by another VM (e.g., wrong driver) - just show hint
                                 self.show_hint = True
@@ -682,19 +666,16 @@ class ToggleListDialog(Dialog):
                             # Disabled but currently selected - allow deselection to fix conflicts
                             for dev in group_devices:
                                 self.selected_values.discard(dev)
-                            print(f"[DEBUG DIALOG] Deselected disabled group {group_devices}, now: {self.selected_values}", file=debug_log, flush=True)
                         else:
                             # Not disabled - normal toggle behavior
                             if is_currently_selected:
                                 # Remove entire group
                                 for dev in group_devices:
                                     self.selected_values.discard(dev)
-                                print(f"[DEBUG DIALOG] Removed group {group_devices}, now: {self.selected_values}", file=debug_log, flush=True)
                             else:
                                 # Add entire group
                                 for dev in group_devices:
                                     self.selected_values.add(dev)
-                                print(f"[DEBUG DIALOG] Added group {group_devices}, now: {self.selected_values}", file=debug_log, flush=True)
 
 
 class OrderableListDialog(Dialog):

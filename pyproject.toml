@@ -3,7 +3,7 @@ name = "vm-manager"
 version = "0.1.0"
 description = "TUI-based virtual machine manager for libvirt/KVM"
 readme = "README.md"
-requires-python = ">=3.13"
+requires-python = ">=3.10"  # 3.13+ recommended for best performance
 license = {text = "MIT"}
 authors = [
     {name = "VM Manager Contributors"}
